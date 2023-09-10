@@ -42,15 +42,26 @@ export class App extends Component {
       el.name.toLowerCase().includes(filter.toLowerCase(normalizedFilter))
     );
   };
+  componentDidMount() {
+    const contacts = localStorage.getItem('contacts');
+    const parsedContacts = JSON.parse(contacts);
+
+    if (parsedContacts) {
+      this.setState({ contacts: parsedContacts });
+    }
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.contacts !== prevState.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
 
   render() {
     const visibleName = this.getVisibleName();
     return (
       <>
         <h1>Phonebook</h1>
-
         <Form createUser={this.createUser} />
-
         <h2>Contacts</h2>
         <Filter filter={this.state.filter} handleSearch={this.handleSearch} />
         <ContactList contacts={visibleName} deleteUser={this.deleteUser} />
